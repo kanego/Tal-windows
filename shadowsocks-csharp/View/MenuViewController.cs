@@ -33,32 +33,12 @@ namespace Shadowsocks.View
 
         private bool _isFirstRun;
         private bool _isStartupChecking;
-        private MenuItem enableItem;
-        private MenuItem modeItem;
-        private MenuItem AutoStartupItem;
-        private MenuItem ShareOverLANItem;
-        private MenuItem SeperatorItem;
+        private MenuItem AutoStartupItem;        private MenuItem SeperatorItem;
         private MenuItem ConfigItem;
         private MenuItem ServersItem;
-        private MenuItem globalModeItem;
-        private MenuItem PACModeItem;
-        private MenuItem localPACItem;
-        private MenuItem onlinePACItem;
-        private MenuItem editLocalPACItem;
-        private MenuItem updateFromGFWListItem;
-        private MenuItem editGFWUserRuleItem;
-        private MenuItem editOnlinePACItem;
-        private MenuItem secureLocalPacUrlToggleItem;
-        private MenuItem autoCheckUpdatesToggleItem;
-        private MenuItem checkPreReleaseToggleItem;
-        private MenuItem proxyItem;
-        private MenuItem hotKeyItem;
         private MenuItem VerboseLoggingToggleItem;
         private ConfigForm configForm;
-        private ProxyForm proxyForm;
         private LogForm logForm;
-        private HotkeySettingsForm hotkeySettingsForm;
-        private string _urlToOpen;
 
         public MenuViewController(ShadowsocksController controller)
         {
@@ -66,16 +46,9 @@ namespace Shadowsocks.View
 
             LoadMenu();
 
-            controller.EnableStatusChanged += controller_EnableStatusChanged;
             controller.ConfigChanged += controller_ConfigChanged;
-            controller.PACFileReadyToOpen += controller_FileReadyToOpen;
-            controller.UserRuleFileReadyToOpen += controller_FileReadyToOpen;
-            controller.ShareOverLANStatusChanged += controller_ShareOverLANStatusChanged;
             controller.VerboseLoggingStatusChanged += controller_VerboseLoggingStatusChanged;
-            controller.EnableGlobalChanged += controller_EnableGlobalChanged;
             controller.Errored += controller_Errored;
-            controller.UpdatePACFromGFWListCompleted += controller_UpdatePACFromGFWListCompleted;
-            controller.UpdatePACFromGFWListError += controller_UpdatePACFromGFWListError;
 
             _notifyIcon = new NotifyIcon();
             UpdateTrayIcon();
@@ -262,46 +235,16 @@ namespace Shadowsocks.View
         private void LoadMenu()
         {
             this.contextMenu1 = new ContextMenu(new MenuItem[] {
-                this.enableItem = CreateMenuItem("Enable System Proxy", new EventHandler(this.EnableItem_Click)),
-                this.modeItem = CreateMenuGroup("Mode", new MenuItem[] {
-                    this.PACModeItem = CreateMenuItem("PAC", new EventHandler(this.PACModeItem_Click)),
-                    this.globalModeItem = CreateMenuItem("Global", new EventHandler(this.GlobalModeItem_Click))
-                }),
                 this.ServersItem = CreateMenuGroup("Servers", new MenuItem[] {
                     this.SeperatorItem = new MenuItem("-"),
                     this.ConfigItem = CreateMenuItem("Edit Servers...", new EventHandler(this.Config_Click)),
                     CreateMenuItem("Statistics Config...", StatisticsConfigItem_Click),
                     new MenuItem("-"),
-                    CreateMenuItem("Share Server Config...", new EventHandler(this.QRCodeItem_Click)),
-                    CreateMenuItem("Scan QRCode from Screen...", new EventHandler(this.ScanQRCodeItem_Click)),
-                    CreateMenuItem("Import URL from Clipboard...", new EventHandler(this.ImportURLItem_Click))
                 }),
-                CreateMenuGroup("PAC ", new MenuItem[] {
-                    this.localPACItem = CreateMenuItem("Local PAC", new EventHandler(this.LocalPACItem_Click)),
-                    this.onlinePACItem = CreateMenuItem("Online PAC", new EventHandler(this.OnlinePACItem_Click)),
-                    new MenuItem("-"),
-                    this.editLocalPACItem = CreateMenuItem("Edit Local PAC File...", new EventHandler(this.EditPACFileItem_Click)),
-                    this.updateFromGFWListItem = CreateMenuItem("Update Local PAC from GFWList", new EventHandler(this.UpdatePACFromGFWListItem_Click)),
-                    this.editGFWUserRuleItem = CreateMenuItem("Edit User Rule for GFWList...", new EventHandler(this.EditUserRuleFileForGFWListItem_Click)),
-                    this.secureLocalPacUrlToggleItem = CreateMenuItem("Secure Local PAC", new EventHandler(this.SecureLocalPacUrlToggleItem_Click)),
-                    CreateMenuItem("Copy Local PAC URL", new EventHandler(this.CopyLocalPacUrlItem_Click)),
-                    this.editOnlinePACItem = CreateMenuItem("Edit Online PAC URL...", new EventHandler(this.UpdateOnlinePACURLItem_Click)),
-                }),
-                this.proxyItem = CreateMenuItem("Forward Proxy...", new EventHandler(this.proxyItem_Click)),
-                new MenuItem("-"),
                 this.AutoStartupItem = CreateMenuItem("Start on Boot", new EventHandler(this.AutoStartupItem_Click)),
-                this.ShareOverLANItem = CreateMenuItem("Allow other Devices to connect", new EventHandler(this.ShareOverLANItem_Click)),
-                new MenuItem("-"),
-                this.hotKeyItem = CreateMenuItem("Edit Hotkeys...", new EventHandler(this.hotKeyItem_Click)),
                 CreateMenuGroup("Help", new MenuItem[] {
                     CreateMenuItem("Show Logs...", new EventHandler(this.ShowLogItem_Click)),
                     this.VerboseLoggingToggleItem = CreateMenuItem( "Verbose Logging", new EventHandler(this.VerboseLoggingToggleItem_Click) ),
-                    CreateMenuGroup("Updates...", new MenuItem[] {
-                        CreateMenuItem("Check for Updates...", new EventHandler(this.checkUpdatesItem_Click)),
-                        new MenuItem("-"),
-                        this.autoCheckUpdatesToggleItem = CreateMenuItem("Check for Updates at Startup", new EventHandler(this.autoCheckUpdatesToggleItem_Click)),
-                        this.checkPreReleaseToggleItem = CreateMenuItem("Check Pre-release Version", new EventHandler(this.checkPreReleaseToggleItem_Click)),
-                    }),
                     CreateMenuItem("About...", new EventHandler(this.AboutItem_Click)),
                 }),
                 new MenuItem("-"),
@@ -316,28 +259,9 @@ namespace Shadowsocks.View
             LoadCurrentConfiguration();
             UpdateTrayIcon();
         }
-
-        private void controller_EnableStatusChanged(object sender, EventArgs e)
-        {
-            enableItem.Checked = controller.GetConfigurationCopy().enabled;
-            modeItem.Enabled = enableItem.Checked;
-        }
-
-        void controller_ShareOverLANStatusChanged(object sender, EventArgs e)
-        {
-            ShareOverLANItem.Checked = controller.GetConfigurationCopy().shareOverLan;
-        }
-
         void controller_VerboseLoggingStatusChanged(object sender, EventArgs e) {
             VerboseLoggingToggleItem.Checked = controller.GetConfigurationCopy().isVerboseLogging;
         }
-
-        void controller_EnableGlobalChanged(object sender, EventArgs e)
-        {
-            globalModeItem.Checked = controller.GetConfigurationCopy().global;
-            PACModeItem.Checked = !globalModeItem.Checked;
-        }
-
         void controller_FileReadyToOpen(object sender, ShadowsocksController.PathEventArgs e)
         {
             string argument = @"/select, " + e.Path;
@@ -405,18 +329,10 @@ namespace Shadowsocks.View
         {
             Configuration config = controller.GetConfigurationCopy();
             UpdateServersMenu();
-            enableItem.Checked = config.enabled;
-            modeItem.Enabled = config.enabled;
-            globalModeItem.Checked = config.global;
-            PACModeItem.Checked = !config.global;
-            ShareOverLANItem.Checked = config.shareOverLan;
+            //enableItem.Checked = config.enabled;
             VerboseLoggingToggleItem.Checked = config.isVerboseLogging;
             AutoStartupItem.Checked = AutoStartup.Check();
-            onlinePACItem.Checked = onlinePACItem.Enabled && config.useOnlinePac;
-            localPACItem.Checked = !onlinePACItem.Checked;
-            secureLocalPacUrlToggleItem.Checked = config.secureLocalPac;
-            UpdatePACItemsEnabledStatus();
-            UpdateUpdateMenu();
+            //UpdateUpdateMenu();
         }
 
         private void UpdateServersMenu()
@@ -473,37 +389,6 @@ namespace Shadowsocks.View
                 configForm.FormClosed += configForm_FormClosed;
             }
         }
-
-        private void ShowProxyForm()
-        {
-            if (proxyForm != null)
-            {
-                proxyForm.Activate();
-            }
-            else
-            {
-                proxyForm = new ProxyForm(controller);
-                proxyForm.Show();
-                proxyForm.Activate();
-                proxyForm.FormClosed += proxyForm_FormClosed;
-            }
-        }
-
-        private void ShowHotKeySettingsForm()
-        {
-            if (hotkeySettingsForm != null)
-            {
-                hotkeySettingsForm.Activate();
-            }
-            else
-            {
-                hotkeySettingsForm = new HotkeySettingsForm(controller);
-                hotkeySettingsForm.Show();
-                hotkeySettingsForm.Activate();
-                hotkeySettingsForm.FormClosed += hotkeySettingsForm_FormClosed;
-            }
-        }
-
         private void ShowLogForm()
         {
             if (logForm != null)
@@ -538,21 +423,6 @@ namespace Shadowsocks.View
                 _isFirstRun = false;
             }
         }
-
-        void proxyForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            proxyForm.Dispose();
-            proxyForm = null;
-            Utils.ReleaseMemory(true);
-        }
-
-        void hotkeySettingsForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            hotkeySettingsForm.Dispose();
-            hotkeySettingsForm = null;
-            Utils.ReleaseMemory(true);
-        }
-
         private void Config_Click(object sender, EventArgs e)
         {
             ShowConfigForm();
@@ -604,7 +474,7 @@ namespace Shadowsocks.View
 
         private void EnableItem_Click(object sender, EventArgs e)
         {
-            controller.ToggleEnable(!enableItem.Checked);
+           // controller.ToggleEnable(!enableItem.Checked);
         }
 
         private void GlobalModeItem_Click(object sender, EventArgs e)
@@ -616,13 +486,6 @@ namespace Shadowsocks.View
         {
             controller.ToggleGlobal(false);
         }
-
-        private void ShareOverLANItem_Click(object sender, EventArgs e)
-        {
-            ShareOverLANItem.Checked = !ShareOverLANItem.Checked;
-            controller.ToggleShareOverLAN(ShareOverLANItem.Checked);
-        }
-
         private void EditPACFileItem_Click(object sender, EventArgs e)
         {
             controller.TouchPACFile();
@@ -660,99 +523,6 @@ namespace Shadowsocks.View
             StatisticsStrategyConfigurationForm form = new StatisticsStrategyConfigurationForm(controller);
             form.Show();
         }
-
-        private void QRCodeItem_Click(object sender, EventArgs e)
-        {
-            QRCodeForm qrCodeForm = new QRCodeForm(controller.GetServerURLForCurrentServer());
-            //qrCodeForm.Icon = this.Icon;
-            // TODO
-            qrCodeForm.Show();
-        }
-
-        private void ScanQRCodeItem_Click(object sender, EventArgs e)
-        {
-            foreach (Screen screen in Screen.AllScreens)
-            {
-                using (Bitmap fullImage = new Bitmap(screen.Bounds.Width,
-                                                screen.Bounds.Height))
-                {
-                    using (Graphics g = Graphics.FromImage(fullImage))
-                    {
-                        g.CopyFromScreen(screen.Bounds.X,
-                                         screen.Bounds.Y,
-                                         0, 0,
-                                         fullImage.Size,
-                                         CopyPixelOperation.SourceCopy);
-                    }
-                    int maxTry = 10;
-                    for (int i = 0; i < maxTry; i++)
-                    {
-                        int marginLeft = (int)((double)fullImage.Width * i / 2.5 / maxTry);
-                        int marginTop = (int)((double)fullImage.Height * i / 2.5 / maxTry);
-                        Rectangle cropRect = new Rectangle(marginLeft, marginTop, fullImage.Width - marginLeft * 2, fullImage.Height - marginTop * 2);
-                        Bitmap target = new Bitmap(screen.Bounds.Width, screen.Bounds.Height);
-
-                        double imageScale = (double)screen.Bounds.Width / (double)cropRect.Width;
-                        using (Graphics g = Graphics.FromImage(target))
-                        {
-                            g.DrawImage(fullImage, new Rectangle(0, 0, target.Width, target.Height),
-                                            cropRect,
-                                            GraphicsUnit.Pixel);
-                        }
-                        var source = new BitmapLuminanceSource(target);
-                        var bitmap = new BinaryBitmap(new HybridBinarizer(source));
-                        QRCodeReader reader = new QRCodeReader();
-                        var result = reader.decode(bitmap);
-                        if (result != null)
-                        {
-                            var success = controller.AddServerBySSURL(result.Text);
-                            QRCodeSplashForm splash = new QRCodeSplashForm();
-                            if (success)
-                            {
-                                splash.FormClosed += splash_FormClosed;
-                            }
-                            else if (result.Text.ToLower().StartsWith("http://") || result.Text.ToLower().StartsWith("https://"))
-                            {
-                                _urlToOpen = result.Text;
-                                splash.FormClosed += openURLFromQRCode;
-                            }
-                            else
-                            {
-                                MessageBox.Show(I18N.GetString("Failed to decode QRCode"));
-                                return;
-                            }
-                            double minX = Int32.MaxValue, minY = Int32.MaxValue, maxX = 0, maxY = 0;
-                            foreach (ResultPoint point in result.ResultPoints)
-                            {
-                                minX = Math.Min(minX, point.X);
-                                minY = Math.Min(minY, point.Y);
-                                maxX = Math.Max(maxX, point.X);
-                                maxY = Math.Max(maxY, point.Y);
-                            }
-                            minX /= imageScale;
-                            minY /= imageScale;
-                            maxX /= imageScale;
-                            maxY /= imageScale;
-                            // make it 20% larger
-                            double margin = (maxX - minX) * 0.20f;
-                            minX += -margin + marginLeft;
-                            maxX += margin + marginLeft;
-                            minY += -margin + marginTop;
-                            maxY += margin + marginTop;
-                            splash.Location = new Point(screen.Bounds.X, screen.Bounds.Y);
-                            // we need a panel because a window has a minimal size
-                            // TODO: test on high DPI
-                            splash.TargetRect = new Rectangle((int)minX, (int)minY, (int)maxX - (int)minX, (int)maxY - (int)minY);
-                            splash.Size = new Size(fullImage.Width, fullImage.Height);
-                            splash.Show();
-                            return;
-                        }
-                    }
-                }
-            }
-            MessageBox.Show(I18N.GetString("No QRCode found. Try to zoom in or move it to the center of the screen."));
-        }
-
         private void ImportURLItem_Click(object sender, EventArgs e)
         {
             var success = controller.AddServerBySSURL(Clipboard.GetText(TextDataFormat.Text));
@@ -766,12 +536,6 @@ namespace Shadowsocks.View
         {
             ShowConfigForm();
         }
-
-        void openURLFromQRCode(object sender, FormClosedEventArgs e)
-        {
-            Process.Start(_urlToOpen);
-        }
-
         private void AutoStartupItem_Click(object sender, EventArgs e)
         {
             AutoStartupItem.Checked = !AutoStartupItem.Checked;
@@ -780,121 +544,13 @@ namespace Shadowsocks.View
                 MessageBox.Show(I18N.GetString("Failed to update registry"));
             }
         }
-
-        private void LocalPACItem_Click(object sender, EventArgs e)
-        {
-            if (!localPACItem.Checked)
-            {
-                localPACItem.Checked = true;
-                onlinePACItem.Checked = false;
-                controller.UseOnlinePAC(false);
-                UpdatePACItemsEnabledStatus();
-            }
-        }
-
-        private void OnlinePACItem_Click(object sender, EventArgs e)
-        {
-            if (!onlinePACItem.Checked)
-            {
-                if (controller.GetConfigurationCopy().pacUrl.IsNullOrEmpty())
-                {
-                    UpdateOnlinePACURLItem_Click(sender, e);
-                }
-                if (!controller.GetConfigurationCopy().pacUrl.IsNullOrEmpty())
-                {
-                    localPACItem.Checked = false;
-                    onlinePACItem.Checked = true;
-                    controller.UseOnlinePAC(true);
-                }
-                UpdatePACItemsEnabledStatus();
-            }
-        }
-
-        private void UpdateOnlinePACURLItem_Click(object sender, EventArgs e)
-        {
-            string origPacUrl = controller.GetConfigurationCopy().pacUrl;
-            string pacUrl = Microsoft.VisualBasic.Interaction.InputBox(
-                I18N.GetString("Please input PAC Url"),
-                I18N.GetString("Edit Online PAC URL"),
-                origPacUrl, -1, -1);
-            if (!pacUrl.IsNullOrEmpty() && pacUrl != origPacUrl)
-            {
-                controller.SavePACUrl(pacUrl);
-            }
-        }
-
-        private void SecureLocalPacUrlToggleItem_Click(object sender, EventArgs e)
-        {
-            Configuration configuration = controller.GetConfigurationCopy();
-            controller.ToggleSecureLocalPac(!configuration.secureLocalPac);
-        }
-
-        private void CopyLocalPacUrlItem_Click(object sender, EventArgs e)
-        {
-            controller.CopyPacUrl();
-        }
-
-        private void UpdatePACItemsEnabledStatus()
-        {
-            if (this.localPACItem.Checked)
-            {
-                this.editLocalPACItem.Enabled = true;
-                this.updateFromGFWListItem.Enabled = true;
-                this.editGFWUserRuleItem.Enabled = true;
-                this.editOnlinePACItem.Enabled = false;
-            }
-            else
-            {
-                this.editLocalPACItem.Enabled = false;
-                this.updateFromGFWListItem.Enabled = false;
-                this.editGFWUserRuleItem.Enabled = false;
-                this.editOnlinePACItem.Enabled = true;
-            }
-        }
-
-
-        private void UpdateUpdateMenu()
-        {
-            Configuration configuration = controller.GetConfigurationCopy();
-            autoCheckUpdatesToggleItem.Checked = configuration.autoCheckUpdate;
-            checkPreReleaseToggleItem.Checked = configuration.checkPreRelease;
-        }
-
-        private void autoCheckUpdatesToggleItem_Click(object sender, EventArgs e)
-        {
-            Configuration configuration = controller.GetConfigurationCopy();
-            controller.ToggleCheckingUpdate(!configuration.autoCheckUpdate);
-            UpdateUpdateMenu();
-        }
-
         private void checkPreReleaseToggleItem_Click(object sender, EventArgs e)
         {
             Configuration configuration = controller.GetConfigurationCopy();
             controller.ToggleCheckingPreRelease(!configuration.checkPreRelease);
-            UpdateUpdateMenu();
+            //UpdateUpdateMenu();
         }
-
-        private void checkUpdatesItem_Click(object sender, EventArgs e)
-        {
-            updateChecker.CheckUpdate(controller.GetConfigurationCopy());
-        }
-
-        private void proxyItem_Click(object sender, EventArgs e)
-        {
-            ShowProxyForm();
-        }
-
-        private void hotKeyItem_Click(object sender, EventArgs e)
-        {
-            ShowHotKeySettingsForm();
-        }
-
         private void ShowLogItem_Click(object sender, EventArgs e)
-        {
-            ShowLogForm();
-        }
-
-        public void ShowLogForm_HotKey()
         {
             ShowLogForm();
         }

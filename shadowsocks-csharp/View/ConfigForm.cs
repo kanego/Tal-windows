@@ -42,18 +42,7 @@ namespace Shadowsocks.View
         {
             AddButton.Text = I18N.GetString("&Add");
             DeleteButton.Text = I18N.GetString("&Delete");
-            DuplicateButton.Text = I18N.GetString("Dupli&cate");
-            IPLabel.Text = I18N.GetString("Server Addr");
-            ServerPortLabel.Text = I18N.GetString("Server Port");
-            PasswordLabel.Text = I18N.GetString("Password");
-            ShowPasswdCheckBox.Text = I18N.GetString("Show Password");
-            EncryptionLabel.Text = I18N.GetString("Encryption");
-            PluginLabel.Text = I18N.GetString("Plugin");
-            PluginOptionsLabel.Text = I18N.GetString("Plugin Options");
-            ProxyPortLabel.Text = I18N.GetString("Proxy Port");
-            RemarksLabel.Text = I18N.GetString("Remarks");
-            TimeoutLabel.Text = I18N.GetString("Timeout(Sec)");
-            ServerGroupBox.Text = I18N.GetString("Server");
+            //ServerGroupBox.Text = I18N.GetString("Server");
             OKButton.Text = I18N.GetString("OK");
             MyCancelButton.Text = I18N.GetString("Cancel");
             MoveUpButton.Text = I18N.GetString("Move &Up");
@@ -70,7 +59,7 @@ namespace Shadowsocks.View
         {
             this.Opacity = 1;
             this.Show();
-            IPTextBox.Focus();
+            //IPTextBox.Focus();
         }
 
         private bool SaveOldSelectedServer()
@@ -82,35 +71,8 @@ namespace Shadowsocks.View
                     return true;
                 }
                 Server server = new Server();
-
-                if (Uri.CheckHostName(server.server = IPTextBox.Text.Trim()) == UriHostNameType.Unknown)
-                {
-                    MessageBox.Show(I18N.GetString("Invalid server address"));
-                    IPTextBox.Focus();
-                    return false;
-                }
-                if (!int.TryParse(ServerPortTextBox.Text, out server.server_port))
-                {
-                    MessageBox.Show(I18N.GetString("Illegal port number format"));
-                    ServerPortTextBox.Focus();
-                    return false;
-                }
-                server.password = PasswordTextBox.Text;
-                server.method = EncryptionSelect.Text;
-                server.plugin = PluginTextBox.Text;
-                server.plugin_opts = PluginOptionsTextBox.Text;
-                server.remarks = RemarksTextBox.Text;
-                if (!int.TryParse(TimeoutTextBox.Text, out server.timeout))
-                {
-                    MessageBox.Show(I18N.GetString("Illegal timeout format"));
-                    TimeoutTextBox.Focus();
-                    return false;
-                }
-                int localPort = int.Parse(ProxyPortTextBox.Text);
                 Configuration.CheckServer(server);
-                Configuration.CheckLocalPort(localPort);
                 _modifiedConfiguration.configs[_lastSelectedIndex] = server;
-                _modifiedConfiguration.localPort = localPort;
 
                 return true;
             }
@@ -126,16 +88,6 @@ namespace Shadowsocks.View
             if (ServersListBox.SelectedIndex >= 0 && ServersListBox.SelectedIndex < _modifiedConfiguration.configs.Count)
             {
                 Server server = _modifiedConfiguration.configs[ServersListBox.SelectedIndex];
-
-                IPTextBox.Text = server.server;
-                ServerPortTextBox.Text = server.server_port.ToString();
-                PasswordTextBox.Text = server.password;
-                ProxyPortTextBox.Text = _modifiedConfiguration.localPort.ToString();
-                EncryptionSelect.Text = server.method ?? "aes-256-cfb";
-                PluginTextBox.Text = server.plugin;
-                PluginOptionsTextBox.Text = server.plugin_opts;
-                RemarksTextBox.Text = server.remarks;
-                TimeoutTextBox.Text = server.timeout.ToString();
             }
         }
 
@@ -286,7 +238,7 @@ namespace Shadowsocks.View
 
         private void ConfigForm_Shown(object sender, EventArgs e)
         {
-            IPTextBox.Focus();
+            //IPTextBox.Focus();
         }
 
         private void ConfigForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -360,9 +312,9 @@ namespace Shadowsocks.View
             }
         }
 
-        private void ShowPasswdCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
         {
-            this.PasswordTextBox.UseSystemPasswordChar = !this.ShowPasswdCheckBox.Checked;
+
         }
     }
 }
