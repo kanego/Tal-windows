@@ -9,7 +9,6 @@ namespace Shadowsocks.Controller
     static class AutoStartup
     {
         // Don't use Application.ExecutablePath
-        // see https://stackoverflow.com/questions/12945805/odd-c-sharp-path-issue
         private static readonly string ExecutablePath = Assembly.GetEntryAssembly().Location;
 
         private static string Key = "Shadowsocks_" + Application.StartupPath.GetHashCode();

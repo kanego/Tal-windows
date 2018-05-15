@@ -14,7 +14,7 @@ using Shadowsocks.Util;
 
 namespace Shadowsocks.Controller
 {
-    using Statistics = Dictionary<string, List<StatisticsRecord>>;
+    //using Statistics = Dictionary<string, List<StatisticsRecord>>;
 
     public sealed class AvailabilityStatistics : IDisposable
     {
@@ -211,7 +211,7 @@ namespace Shadowsocks.Controller
             {
                 AppendRecord(server.Identifier(), record);
             }
-            Logging.Debug($"Ping {server.FriendlyName()} {e.RoundtripTime.Count} times, {(100 - record.PackageLoss * 100)}% packages loss, min {record.MinResponse} ms, max {record.MaxResponse} ms, avg {record.AverageResponse} ms");
+           // Logging.Debug($"Ping {server.FriendlyName()} {e.RoundtripTime.Count} times, {(100 - record.PackageLoss * 100)}% packages loss, min {record.MinResponse} ms, max {record.MaxResponse} ms, avg {record.AverageResponse} ms");
             if (Interlocked.Decrement(ref state.counter) == 0)
             {
                 Save();
@@ -419,7 +419,7 @@ namespace Shadowsocks.Controller
             {
                 try
                 {
-                    Logging.Debug($"Ping {server.FriendlyName()}");
+                    //Logging.Debug($"Ping {server.FriendlyName()}");
                     if (ip == null)
                     {
                         ip = Dns.GetHostAddresses(server.server)
@@ -435,7 +435,7 @@ namespace Shadowsocks.Controller
                 }
                 catch (Exception e)
                 {
-                    Logging.Error($"An exception occured while eveluating {server.FriendlyName()}");
+                   // Logging.Error($"An exception occured while eveluating {server.FriendlyName()}");
                     Logging.LogUsefulException(e);
                     FireCompleted(e, userstate);
                 }
@@ -447,19 +447,19 @@ namespace Shadowsocks.Controller
                 {
                     if (e.Reply.Status == IPStatus.Success)
                     {
-                        Logging.Debug($"Ping {server.FriendlyName()} {e.Reply.RoundtripTime} ms");
+                       // Logging.Debug($"Ping {server.FriendlyName()} {e.Reply.RoundtripTime} ms");
                         RoundtripTime.Add((int?)e.Reply.RoundtripTime);
                     }
                     else
                     {
-                        Logging.Debug($"Ping {server.FriendlyName()} timeout");
+                        //Logging.Debug($"Ping {server.FriendlyName()} timeout");
                         RoundtripTime.Add(null);
                     }
                     TestNext(e.UserState);
                 }
                 catch (Exception ex)
                 {
-                    Logging.Error($"An exception occured while eveluating {server.FriendlyName()}");
+                    //Logging.Error($"An exception occured while eveluating {server.FriendlyName()}");
                     Logging.LogUsefulException(ex);
                     FireCompleted(ex, e.UserState);
                 }

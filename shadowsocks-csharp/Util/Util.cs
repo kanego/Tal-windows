@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Shadowsocks.Controller;
+using System.Management;
+using System.Net;
+using System.Threading;
 
 namespace Shadowsocks.Util
 {
@@ -255,5 +258,79 @@ namespace Shadowsocks.Util
             }
             return false;
         }
+        public static string GetMacAddress()
+        {
+            try
+            {
+                string strMac = string.Empty;
+                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                ManagementObjectCollection moc = mc.GetInstances();
+                foreach (ManagementObject mo in moc)
+                {
+                    if ((bool)mo["IPEnabled"] == true)
+                    {
+                        strMac = mo["MacAddress"].ToString();
+                    }
+                }
+                moc = null;
+                mc = null;
+                return strMac;
+            }
+            catch
+            {
+                return "unknown";
+            }
+        }
+        public static string HttpPost(string Url, string postDataStr)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = postDataStr.Length;
+            StreamWriter writer = new StreamWriter(request.GetRequestStream(), System.Text.Encoding.ASCII);
+            writer.Write(postDataStr);
+            writer.Flush();
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            string encoding = response.ContentEncoding;
+            if (encoding == null || encoding.Length < 1)
+            {
+                encoding = "UTF-8"; //默认编码  
+            }
+            StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding(encoding));
+            string retString = reader.ReadToEnd();
+            return retString;
+        }
+
+        public static string HttpGet(string Url, string postDataStr)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url + (postDataStr == "" ? "" : "?") + postDataStr);
+            request.Method = "GET";
+            request.ContentType = "text/html;charset=UTF-8";
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream myResponseStream = response.GetResponseStream();
+            StreamReader myStreamReader = new StreamReader(myResponseStream, System.Text.Encoding.UTF8);
+            string retString = myStreamReader.ReadToEnd();
+            myStreamReader.Close();
+            myResponseStream.Close();
+
+            return retString;
+        }
+
+        public static string GetCpuUsage()
+        {
+            PerformanceCounter PC = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            string cpu =  Convert.ToInt32(PC.NextValue()) + "%";
+            Thread.Sleep(1000);
+            string cpu1 =  Convert.ToInt32(PC.NextValue()) + "%";
+            return cpu1;
+        }
+        public static string GetMemorySize()
+        {
+            PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
+            string result = ramCounter.NextValue() + "MB";
+            return result;
+        }
     }
+
 }

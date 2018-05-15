@@ -19,7 +19,7 @@ namespace Shadowsocks.Properties {
     // 类通过类似于 ResGen 或 Visual Studio 的工具自动生成的。
     // 若要添加或移除成员，请编辑 .ResX 文件，然后重新运行 ResGen
     // (以 /str 作为命令选项)，或重新生成 VS 项目。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,16 +61,6 @@ namespace Shadowsocks.Properties {
         }
         
         /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] abp_js {
-            get {
-                object obj = ResourceManager.GetObject("abp_js", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 # translation for Japanese
         ///
         ///Shadowsocks=Shadowsocks
@@ -86,73 +76,17 @@ namespace Shadowsocks.Properties {
         ///Statistics Config...=統計情報の設定...
         ///Start on Boot=システムと同時に起動
         ///Forward Proxy...=フォワードプロキシの設定...
-        ///Allow Clients from LAN=LAN からのアクセスを許可
+        ///Allow other Devices to connect=他のデバイスからの接続を許可する
         ///Local PAC=ローカル PAC
         ///Online PAC=オンライン PAC
         ///Edit Local PAC File...=ローカル PAC ファイルの編集...
         ///Update Local PAC from GFWList=GFWList からローカル PAC を更新
         ///Edit User Rule for GFWList...=ユーザールールの編集...
-        ///Secure Local  [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        ///Sec [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string ja {
             get {
                 return ResourceManager.GetString("ja", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] libsscrypto_dll {
-            get {
-                object obj = ResourceManager.GetObject("libsscrypto_dll", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] mgwz_dll {
-            get {
-                object obj = ResourceManager.GetObject("mgwz_dll", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 listen-address __PRIVOXY_BIND_IP__:__PRIVOXY_BIND_PORT__
-        ///toggle 0
-        ///logfile ss_privoxy.log
-        ///show-on-task-bar 0
-        ///activity-animation 0
-        ///forward-socks5 / 127.0.0.1:__SOCKS_PORT__ .
-        ///hide-console
-        /// 的本地化字符串。
-        /// </summary>
-        internal static string privoxy_conf {
-            get {
-                return ResourceManager.GetString("privoxy_conf", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] privoxy_exe {
-            get {
-                object obj = ResourceManager.GetObject("privoxy_exe", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] proxy_pac_txt {
-            get {
-                object obj = ResourceManager.GetObject("proxy_pac_txt", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         
@@ -217,37 +151,6 @@ namespace Shadowsocks.Properties {
         }
         
         /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] sysproxy_exe {
-            get {
-                object obj = ResourceManager.GetObject("sysproxy_exe", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找 System.Byte[] 类型的本地化资源。
-        /// </summary>
-        internal static byte[] sysproxy64_exe {
-            get {
-                object obj = ResourceManager.GetObject("sysproxy64_exe", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 ! Put user rules line by line in this file.
-        ///! See https://adblockplus.org/en/filter-cheatsheet
-        /// 的本地化字符串。
-        /// </summary>
-        internal static string user_rule {
-            get {
-                return ResourceManager.GetString("user_rule", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   查找类似 # translation for Simplified Chinese
         ///
         ///Shadowsocks=Shadowsocks
@@ -263,14 +166,13 @@ namespace Shadowsocks.Properties {
         ///Statistics Config...=统计配置...
         ///Start on Boot=开机启动
         ///Forward Proxy...=正向代理设置...
-        ///Allow Clients from LAN=允许来自局域网的连接
+        ///Allow other Devices to connect=允许其他设备连入
         ///Local PAC=使用本地 PAC
         ///Online PAC=使用在线 PAC
         ///Edit Local PAC File...=编辑本地 PAC 文件...
         ///Update Local PAC from GFWList=从 GFWList 更新本地 PAC
         ///Edit User Rule for GFWList...=编辑 GFWList 的用户规则...
-        ///Secure Local PAC=保护本地 PAC
-        ///Cop [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        ///Secure Local PAC=保护本地 PA [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string zh_CN {
             get {
@@ -294,13 +196,13 @@ namespace Shadowsocks.Properties {
         ///Statistics Config...=統計設定檔...
         ///Start on Boot=開機啟動
         ///Forward Proxy...=正向 Proxy 設定...
-        ///Allow Clients from LAN=允許來自區域網路的連線
+        ///Allow other Devices to connect=允許其他裝置連入
         ///Local PAC=使用本機 PAC
         ///Online PAC=使用線上 PAC
         ///Edit Local PAC File...=編輯本機 PAC 檔案...
         ///Update Local PAC from GFWList=從 GFWList 更新本機 PAC
         ///Edit User Rule for GFWList...=編輯 GFWList 的使用者規則...
-        ///Secure Local PAC=安全本機 [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        ///Secure Local PAC [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string zh_TW {
             get {

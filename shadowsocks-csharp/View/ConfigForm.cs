@@ -33,8 +33,7 @@ namespace Shadowsocks.View
             this.Icon = Icon.FromHandle(Resources.ssw128.GetHicon());
 
             this.controller = controller;
-            controller.ConfigChanged += controller_ConfigChanged;
-
+            //controller.ConfigChanged += controller_ConfigChanged;
             LoadCurrentConfiguration();
         }
 
@@ -42,11 +41,10 @@ namespace Shadowsocks.View
         {
             AddButton.Text = I18N.GetString("&Add");
             DeleteButton.Text = I18N.GetString("&Delete");
-            //ServerGroupBox.Text = I18N.GetString("Server");
-            OKButton.Text = I18N.GetString("OK");
-            MyCancelButton.Text = I18N.GetString("Cancel");
-            MoveUpButton.Text = I18N.GetString("Move &Up");
-            MoveDownButton.Text = I18N.GetString("Move D&own");
+            IPLabel.Text = I18N.GetString("Server Addr");
+            ServerGroupBox.Text = I18N.GetString("Server");
+            //OKButton.Text = I18N.GetString("OK");
+            //MyCancelButton.Text = I18N.GetString("Cancel");
             this.Text = I18N.GetString("Edit Servers");
         }
 
@@ -59,35 +57,15 @@ namespace Shadowsocks.View
         {
             this.Opacity = 1;
             this.Show();
-            //IPTextBox.Focus();
+            IPTextBox.Focus();
         }
-
-        private bool SaveOldSelectedServer()
-        {
-            try
-            {
-                if (_lastSelectedIndex == -1 || _lastSelectedIndex >= _modifiedConfiguration.configs.Count)
-                {
-                    return true;
-                }
-                Server server = new Server();
-                Configuration.CheckServer(server);
-                _modifiedConfiguration.configs[_lastSelectedIndex] = server;
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            return false;
-        }
-
         private void LoadSelectedServer()
         {
             if (ServersListBox.SelectedIndex >= 0 && ServersListBox.SelectedIndex < _modifiedConfiguration.configs.Count)
             {
                 Server server = _modifiedConfiguration.configs[ServersListBox.SelectedIndex];
+
+                IPTextBox.Text = server.server;
             }
         }
 
@@ -96,7 +74,16 @@ namespace Shadowsocks.View
             ServersListBox.Items.Clear();
             foreach (Server server in _modifiedConfiguration.configs)
             {
-                ServersListBox.Items.Add(server.FriendlyName());
+                ServersListBox.Items.Add(server.server);
+            }
+            _lastSelectedIndex = 0;
+            if (_modifiedConfiguration.configs.Count <= 0)
+            {
+                MessageBox.Show(I18N.GetString("Please add at least one server"));
+            }
+            else
+            {
+                IPTextBox.Text = _modifiedConfiguration.configs[_lastSelectedIndex].server;
             }
         }
 
@@ -104,14 +91,6 @@ namespace Shadowsocks.View
         {
             _modifiedConfiguration = controller.GetConfigurationCopy();
             LoadConfiguration(_modifiedConfiguration);
-            _lastSelectedIndex = _modifiedConfiguration.index;
-            if (_lastSelectedIndex < 0 || _lastSelectedIndex >= ServersListBox.Items.Count)
-            {
-                _lastSelectedIndex = 0;
-            }
-            ServersListBox.SelectedIndex = _lastSelectedIndex;
-            UpdateMoveUpAndDownButton();
-            LoadSelectedServer();
         }
 
         private void ConfigForm_Load(object sender, EventArgs e)
@@ -126,109 +105,47 @@ namespace Shadowsocks.View
             if (e.KeyCode == Keys.Enter)
             {
                 Server server = controller.GetCurrentServer();
-                if (!SaveOldSelectedServer())
-                {
-                    return;
-                }
                 if (_modifiedConfiguration.configs.Count == 0)
                 {
                     MessageBox.Show(I18N.GetString("Please add at least one server"));
                     return;
                 }
-                controller.SaveServers(_modifiedConfiguration.configs, _modifiedConfiguration.localPort);
-                controller.SelectServerIndex(_modifiedConfiguration.configs.IndexOf(server));
+                controller.SaveConfig(_modifiedConfiguration);
+                //controller.SaveServers(_modifiedConfiguration.configs);
+                //controller.SelectServerIndex(_modifiedConfiguration.configs.IndexOf(server));
             }
 
         }
-
-        private void ServersListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!ServersListBox.CanSelect)
-            {
-                return;
-            }
-            if (_lastSelectedIndex == ServersListBox.SelectedIndex)
-            {
-                // we are moving back to oldSelectedIndex or doing a force move
-                return;
-            }
-            if (!SaveOldSelectedServer())
-            {
-                // why this won't cause stack overflow?
-                ServersListBox.SelectedIndex = _lastSelectedIndex;
-                return;
-            }
-            if (_lastSelectedIndex >= 0)
-            {
-                ServersListBox.Items[_lastSelectedIndex] = _modifiedConfiguration.configs[_lastSelectedIndex].FriendlyName();
-            }
-            UpdateMoveUpAndDownButton();
-            LoadSelectedServer();
-            _lastSelectedIndex = ServersListBox.SelectedIndex;
-        }
-
         private void AddButton_Click(object sender, EventArgs e)
         {
-            if (!SaveOldSelectedServer())
-            {
-                return;
-            }
             Server server = Configuration.GetDefaultServer();
+            if (Uri.CheckHostName(server.server = IPTextBox.Text.Trim()) == UriHostNameType.Unknown)
+            {
+                MessageBox.Show(I18N.GetString("Invalid server address"));
+                IPTextBox.Focus();
+                return ;
+            }
             _modifiedConfiguration.configs.Add(server);
             LoadConfiguration(_modifiedConfiguration);
-            ServersListBox.SelectedIndex = _modifiedConfiguration.configs.Count - 1;
-            _lastSelectedIndex = ServersListBox.SelectedIndex;
-        }
-
-        private void DuplicateButton_Click( object sender, EventArgs e )
-        {
-            if (!SaveOldSelectedServer())
-            {
-                return;
-            }
-            Server currServer = _modifiedConfiguration.configs[_lastSelectedIndex];
-            var currIndex = _modifiedConfiguration.configs.IndexOf( currServer );
-            _modifiedConfiguration.configs.Insert(currIndex + 1, currServer);
-            LoadConfiguration(_modifiedConfiguration);
-            ServersListBox.SelectedIndex = currIndex + 1;
             _lastSelectedIndex = ServersListBox.SelectedIndex;
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
+            if (_modifiedConfiguration.configs.Count == 1)
+            {
+                MessageBox.Show(I18N.GetString("Please add at least one server"));
+                return;
+            }
             _lastSelectedIndex = ServersListBox.SelectedIndex;
             if (_lastSelectedIndex >= 0 && _lastSelectedIndex < _modifiedConfiguration.configs.Count)
             {
                 _modifiedConfiguration.configs.RemoveAt(_lastSelectedIndex);
             }
-            if (_lastSelectedIndex >= _modifiedConfiguration.configs.Count)
-            {
-                // can be -1
-                _lastSelectedIndex = _modifiedConfiguration.configs.Count - 1;
-            }
             ServersListBox.SelectedIndex = _lastSelectedIndex;
             LoadConfiguration(_modifiedConfiguration);
             ServersListBox.SelectedIndex = _lastSelectedIndex;
             LoadSelectedServer();
-        }
-
-        private void OKButton_Click(object sender, EventArgs e)
-        {
-            if (!SaveOldSelectedServer())
-            {
-                return;
-            }
-            if (_modifiedConfiguration.configs.Count == 0)
-            {
-                MessageBox.Show(I18N.GetString("Please add at least one server"));
-                return;
-            }
-            controller.SaveServers(_modifiedConfiguration.configs, _modifiedConfiguration.localPort);
-            // SelectedIndex remains valid
-            // We handled this in event handlers, e.g. Add/DeleteButton, SelectedIndexChanged
-            // and move operations
-            controller.SelectServerIndex(ServersListBox.SelectedIndex);
-            this.Close();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -238,81 +155,15 @@ namespace Shadowsocks.View
 
         private void ConfigForm_Shown(object sender, EventArgs e)
         {
-            //IPTextBox.Focus();
+            IPTextBox.Focus();
         }
 
         private void ConfigForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            controller.ConfigChanged -= controller_ConfigChanged;
+            //controller.ConfigChanged -= controller_ConfigChanged;
+            controller.SaveConfig(_modifiedConfiguration);
         }
-
-        private void MoveConfigItem(int step)
-        {
-            int index = ServersListBox.SelectedIndex;
-            Server server = _modifiedConfiguration.configs[index];
-            object item = ServersListBox.Items[index];
-
-            _modifiedConfiguration.configs.Remove(server);
-            _modifiedConfiguration.configs.Insert(index + step, server);
-            _modifiedConfiguration.index += step;
-
-            ServersListBox.BeginUpdate();
-            ServersListBox.Enabled = false;
-            _lastSelectedIndex = index + step;
-            ServersListBox.Items.Remove(item);
-            ServersListBox.Items.Insert(index + step, item);
-            ServersListBox.Enabled = true;
-            ServersListBox.SelectedIndex = index + step;
-            ServersListBox.EndUpdate();
-
-            UpdateMoveUpAndDownButton();
-        }
-
-        private void UpdateMoveUpAndDownButton()
-        {
-            if (ServersListBox.SelectedIndex == 0)
-            {
-                MoveUpButton.Enabled = false;
-            }
-            else
-            {
-                MoveUpButton.Enabled = true;
-            }
-            if (ServersListBox.SelectedIndex == ServersListBox.Items.Count - 1)
-            {
-                MoveDownButton.Enabled = false;
-            }
-            else
-            {
-                MoveDownButton.Enabled = true;
-            }
-        }
-
-        private void MoveUpButton_Click(object sender, EventArgs e)
-        {
-            if (!SaveOldSelectedServer())
-            {
-                return;
-            }
-            if (ServersListBox.SelectedIndex > 0)
-            {
-                MoveConfigItem(-1);  // -1 means move backward
-            }
-        }
-
-        private void MoveDownButton_Click(object sender, EventArgs e)
-        {
-            if (!SaveOldSelectedServer())
-            {
-                return;
-            }
-            if (ServersListBox.SelectedIndex < ServersListBox.Items.Count - 1)
-            {
-                MoveConfigItem(+1);  // +1 means move forward
-            }
-        }
-
-        private void tableLayoutPanel2_Paint(object sender, PaintEventArgs e)
+        private void IPTextBox_TextChanged(object sender, EventArgs e)
         {
 
         }
