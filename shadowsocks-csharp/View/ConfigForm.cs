@@ -167,5 +167,15 @@ namespace Shadowsocks.View
         {
 
         }
+
+        private void ServersListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 }

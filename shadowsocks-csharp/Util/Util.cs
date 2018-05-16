@@ -329,7 +329,8 @@ namespace Shadowsocks.Util
         {
             PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
             string result = ramCounter.NextValue() + "MB";
-            return result;
+            string total = GC.GetTotalMemory(true)/1024 + "MB";
+            return result +  total;
         }
     }
 

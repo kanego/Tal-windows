@@ -252,13 +252,13 @@ namespace Shadowsocks.View
                 i++;
             }
 
-            foreach (MenuItem item in items)
-            {
-                if (item.Tag != null && (item.Tag.ToString() == configuration.index.ToString()))
-                {
-                    item.Checked = true;
-                }
-            }
+            //foreach (MenuItem item in items)
+            //{
+            //    if (item.Tag != null && (item.Tag.ToString() == configuration.index.ToString()))
+            //    {
+            //        item.Checked = true;
+            //    }
+            //}
         }
 
         private void ShowConfigForm()
@@ -307,7 +307,7 @@ namespace Shadowsocks.View
 
         private void AboutItem_Click(object sender, EventArgs e)
         {
-            Process.Start("https://github.com/shadowsocks/shadowsocks-windows");
+            Process.Start("https://github.com/kanego/Tal-windows");
         }
 
         private void notifyIcon1_Click(object sender, MouseEventArgs e)

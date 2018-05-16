@@ -28,7 +28,7 @@ namespace Shadowsocks.Controller
 
         private Configuration _config;
 
-        private PingService _pingservice;
+        private ReportService _reportService;
 
 
         private bool stopped = false;
@@ -42,7 +42,7 @@ namespace Shadowsocks.Controller
         public ShadowsocksController()
         {
             _config = Configuration.Load();
-            _pingservice = new PingService();
+            _reportService = new ReportService();
 
             StartReleasingMemory();
         }
@@ -116,8 +116,8 @@ namespace Shadowsocks.Controller
         {
             // some logic in configuration updated the config when saving, we need to read it again
             _config = Configuration.Load();
-            _pingservice.Stop();
-            _pingservice.Start(_config);  
+            _reportService.Stop();
+            _reportService.Start(_config);  
             Utils.ReleaseMemory(true);
         }
 
