@@ -9,6 +9,7 @@ using Shadowsocks.Controller;
 using System.Management;
 using System.Net;
 using System.Threading;
+using System.Text;
 
 namespace Shadowsocks.Util
 {
@@ -285,7 +286,7 @@ namespace Shadowsocks.Util
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
             request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentType = "application/json";
             request.ContentLength = postDataStr.Length;
             StreamWriter writer = new StreamWriter(request.GetRequestStream(), System.Text.Encoding.ASCII);
             writer.Write(postDataStr);
@@ -331,6 +332,27 @@ namespace Shadowsocks.Util
             string result = ramCounter.NextValue() + "MB";
             string total = GC.GetTotalMemory(true)/1024 + "MB";
             return result +  total;
+        }
+        public static string GB2312ToUtf8(string gb2312String)
+        {
+            Encoding fromEncoding = Encoding.GetEncoding("gb2312");
+            Encoding toEncoding = Encoding.UTF8;
+            return EncodingConvert(gb2312String, fromEncoding, toEncoding);
+        }
+
+        public static string Utf8ToGB2312(string utf8String)
+        {
+            Encoding fromEncoding = Encoding.UTF8;
+            Encoding toEncoding = Encoding.GetEncoding("gb2312");
+            return EncodingConvert(utf8String, fromEncoding, toEncoding);
+        }
+        public static string EncodingConvert(string fromString, Encoding fromEncoding, Encoding toEncoding)
+        {
+            byte[] fromBytes = fromEncoding.GetBytes(fromString);
+            byte[] toBytes = Encoding.Convert(fromEncoding, toEncoding, fromBytes);
+
+            string toString = toEncoding.GetString(toBytes);
+            return toString;
         }
     }
 

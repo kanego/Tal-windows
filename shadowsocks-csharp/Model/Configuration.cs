@@ -12,8 +12,9 @@ namespace Shadowsocks.Model
     {
         public List<Server> configs;
         public int index;
+        public string reporturl;
 
-        private static string CONFIG_FILE = "gui-config.json";
+        private static string CONFIG_FILE = "config.json";
 
         public Server GetCurrentServer()
         {
