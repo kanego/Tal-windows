@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的常规信息通过下列属性集
 // 控制。更改这些属性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("Shadowsocks")]
+[assembly: AssemblyTitle("Talsocks")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Shadowsocks")]
+[assembly: AssemblyProduct("Talsocks")]
 [assembly: AssemblyCopyright("clowwindy & community 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -34,4 +34,4 @@ using System.Runtime.InteropServices;
 // 方法是按如下所示使用“*”:
 // [assembly: AssemblyVersion("1.0.*")]
 //[assembly: AssemblyVersion(UpdateChecker.Version)]
-// [assembly: AssemblyFileVersion("2.0.0")]
+[assembly: AssemblyFileVersion("1.0.0")]

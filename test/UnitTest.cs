@@ -1,13 +1,11 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shadowsocks.Controller;
-using Shadowsocks.Encryption;
 using GlobalHotKey;
 using System.Windows.Input;
 using System.Threading;
 using System.Collections.Generic;
 using Shadowsocks.Controller.Hotkeys;
-using Shadowsocks.Encryption.Stream;
 using Shadowsocks.Model;
 
 namespace test

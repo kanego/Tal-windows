@@ -284,21 +284,29 @@ namespace Shadowsocks.Util
         }
         public static string HttpPost(string Url, string postDataStr)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.ContentLength = postDataStr.Length;
-            StreamWriter writer = new StreamWriter(request.GetRequestStream(), System.Text.Encoding.ASCII);
-            writer.Write(postDataStr);
-            writer.Flush();
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string encoding = response.ContentEncoding;
-            if (encoding == null || encoding.Length < 1)
+            string retString = "";
+            try
             {
-                encoding = "UTF-8"; //默认编码  
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url);
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                request.ContentLength = postDataStr.Length;
+                StreamWriter writer = new StreamWriter(request.GetRequestStream(), System.Text.Encoding.ASCII);
+                writer.Write(postDataStr);
+                writer.Flush();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                string encoding = response.ContentEncoding;
+                if (encoding == null || encoding.Length < 1)
+                {
+                    encoding = "UTF-8"; //默认编码  
+                }
+                StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding(encoding));
+                retString = reader.ReadToEnd();
             }
-            StreamReader reader = new StreamReader(response.GetResponseStream(), System.Text.Encoding.GetEncoding(encoding));
-            string retString = reader.ReadToEnd();
+            catch (Exception e)
+            {
+                Logging.LogUsefulException(e);
+            }
             return retString;
         }
 
